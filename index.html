@@ -190,6 +190,7 @@ table { border-collapse: collapse; width: 100%; }
 .note p { margin: 0; }
 .panel-sub { font-size: 13.5px; color: var(--muted); margin: -6px 0 12px; }
 @media (prefers-reduced-motion: no-preference) { .wbar .fill, .share .bar { transition: width .25s ease; } }
+.wrap > *, .grid2 > * { min-width: 0; }
 </style>
 
 <div class="wrap">
@@ -222,7 +223,7 @@ table { border-collapse: collapse; width: 100%; }
       <p class="panel-sub">依「六年平均配分 × 近三年趨勢 × 該科權重」排序。「占總成績」是該章每年平均配分換算成總成績的百分比。點一列可看該章歷屆題目，題目可展開截圖與解析。</p>
       <div class="tabs" id="prio-filter" role="group" aria-label="清單範圍"></div>
       <p class="panel-sub" id="prio-warn" hidden></p>
-      <table class="prio"><thead><tr><th>#</th><th>考科</th><th>章節／題型</th><th class="num">每年平均</th><th>近三年</th><th>占總成績</th></tr></thead><tbody id="prio"></tbody></table>
+      <div class="scroll"><table class="prio"><thead><tr><th>#</th><th>考科</th><th>章節／題型</th><th class="num">每年平均</th><th>近三年</th><th>占總成績</th></tr></thead><tbody id="prio"></tbody></table></div>
       <button type="button" class="linkbtn" id="prio-more"></button>
     </section>
   </div>
