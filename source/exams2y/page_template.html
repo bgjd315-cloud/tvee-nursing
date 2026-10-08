@@ -1,0 +1,890 @@
+<title>二技護理類考題分析</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap">
+<style>
+/* Layout: 答案卡式的紙面——上方選校，左權重右優先清單，下方各科熱度表與題目 */
+:root {
+  --paper: #fbf8f6;
+  --surface: #ffffff;
+  --ink: #1e2433;
+  --muted: #5d6472;
+  --rule: #e8dcd8;
+  --card-red: #be3b34;
+  --card-red-soft: #f6e3e0;
+  --graphite: #343a46;
+  --on-graphite: #ffffff;
+  --up: #2f7d5b;
+  --down: #b5472f;
+  --font-display: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+  --font-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Consolas", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #15171c; --surface: #1c1f26; --ink: #ece8e4; --muted: #a3a8b1; --rule: #30333b;
+    --card-red: #e46a5f; --card-red-soft: #3a2422; --graphite: #cfd3da; --on-graphite: #15171c;
+    --up: #5fbf92; --down: #ec8a72; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #15171c; --surface: #1c1f26; --ink: #ece8e4; --muted: #a3a8b1; --rule: #30333b;
+  --card-red: #e46a5f; --card-red-soft: #3a2422; --graphite: #cfd3da; --on-graphite: #15171c;
+  --up: #5fbf92; --down: #ec8a72; color-scheme: dark;
+}
+body { background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.6; }
+.wrap { max-width: 1100px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 56px; display: grid; gap: 28px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(26px, 4vw, 36px); font-weight: 900; letter-spacing: .02em; }
+h2 { font-size: 20px; }
+.mono, .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.eyebrow { font-size: 12px; letter-spacing: .14em; color: var(--card-red); font-weight: 700; }
+
+header { display: grid; gap: 8px; border-bottom: 2px solid var(--card-red); padding-bottom: 16px; }
+header p { margin: 0; max-width: 68ch; }
+
+/* 答案卡式的區段標頭 */
+.sec-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid var(--card-red); padding-bottom: 6px; margin-bottom: 14px; }
+.sec-head .tag { font-family: var(--font-mono); font-size: 12px; color: var(--card-red); border: 1px solid var(--card-red); padding: 0 6px; border-radius: 3px; }
+
+.controls { display: grid; gap: 14px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.row > .label { font-size: 13px; color: var(--muted); min-width: 4.5em; }
+.chip { font: inherit; font-size: 14px; border: 1px solid var(--rule); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 5px 14px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--card-red); border-color: var(--card-red); color: #fff; }
+.chip:focus-visible, button:focus-visible, .hm tr:focus-visible, input:focus-visible { outline: 2px solid var(--card-red); outline-offset: 2px; }
+.seg { display: inline-flex; border: 1px solid var(--card-red); border-radius: 6px; overflow: hidden; }
+.seg button { font: inherit; font-size: 14px; border: 0; background: transparent; color: var(--card-red); padding: 5px 14px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--card-red); color: #fff; }
+
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr); gap: 28px; }
+@media (max-width: 860px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
+
+/* 權重條 */
+.wbars { display: grid; gap: 10px; }
+.wbar { display: grid; grid-template-columns: 7.5em minmax(0, 1fr) 3.6em; gap: 10px; align-items: center; font-size: 14px; }
+.wbar .track { height: 14px; background: var(--card-red-soft); border-radius: 2px; position: relative; overflow: hidden; }
+.wbar .fill { position: absolute; inset: 0 auto 0 0; background: var(--card-red); border-radius: 2px; }
+.wbar .num { text-align: right; }
+.wbar.zero { color: var(--muted); }
+.school-notes { margin-top: 18px; display: grid; gap: 10px; font-size: 13.5px; }
+.school-notes .sn { border-left: 3px solid var(--rule); padding-left: 10px; }
+.school-notes b { font-weight: 700; }
+
+/* 優先清單 */
+table { border-collapse: collapse; width: 100%; }
+.prio th, .prio td { padding: 7px 8px; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: middle; font-size: 14px; }
+.prio th { font-size: 12px; color: var(--muted); font-weight: 500; }
+.prio td.num, .prio th.num { text-align: right; }
+.subj { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 3px; border: 1px solid var(--rule); white-space: nowrap; }
+.rank { font-family: var(--font-mono); color: var(--card-red); font-weight: 600; }
+.share { display: grid; grid-template-columns: minmax(40px, 1fr) 3.4em; gap: 8px; align-items: center; }
+.share .bar { height: 8px; background: var(--graphite); border-radius: 1px; }
+.trend { font-family: var(--font-mono); font-size: 13px; white-space: nowrap; }
+.trend.up { color: var(--up); } .trend.down { color: var(--down); } .trend.flat { color: var(--muted); }
+.linkbtn { font: inherit; font-size: 13px; background: none; border: 0; color: var(--card-red); cursor: pointer; padding: 6px 0; text-decoration: underline; text-underline-offset: 3px; }
+.prio tr.clickable { cursor: pointer; }
+.prio tr.clickable:hover td { background: var(--card-red-soft); }
+
+/* 熱度表 */
+.scroll { overflow-x: auto; }
+.hm { min-width: 640px; }
+.hm th, .hm td { padding: 0; font-size: 13.5px; }
+.hm thead th { font-family: var(--font-mono); color: var(--card-red); font-weight: 600; padding: 6px 4px; text-align: center; border-bottom: 1px solid var(--card-red); }
+.hm thead th:first-child { text-align: left; font-family: var(--font-body); color: var(--muted); font-weight: 500; }
+.hm tbody tr { cursor: pointer; }
+.hm tbody tr:hover .cname, .hm tbody tr[aria-selected="true"] .cname { color: var(--card-red); }
+.hm tbody tr[aria-selected="true"] td { background: var(--card-red-soft); }
+.hm .cname { padding: 5px 10px 5px 0; white-space: nowrap; }
+.hm .cell { width: 62px; text-align: center; padding: 3px; }
+.hm .cell span { display: block; border-radius: 4px; padding: 4px 0; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.hm .avg, .hm .tr { width: 76px; text-align: right; padding-right: 8px; font-family: var(--font-mono); }
+.legend { display: flex; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); margin-top: 8px; flex-wrap: wrap; }
+.legend i { width: 22px; height: 12px; border-radius: 3px; display: inline-block; border: 1px solid var(--rule); }
+
+/* 題目列表 */
+.qpanel { margin-top: 18px; display: grid; gap: 10px; }
+.qhead { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.qhead input { font: inherit; font-size: 14px; padding: 6px 10px; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); color: var(--ink); width: min(260px, 100%); }
+.qlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.qlist li { border-bottom: 1px dashed var(--rule); font-size: 14px; }
+.qlist li.empty { padding: 8px 0; }
+.qlist summary { display: grid; grid-template-columns: 6.5em auto minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 8px 0; cursor: pointer; list-style: none; }
+.qlist summary::-webkit-details-marker { display: none; }
+.qlist summary::after { content: "解析 ▾"; font-size: 12px; color: var(--muted); white-space: nowrap; }
+.qlist details[open] summary::after { content: "收合 ▴"; }
+.qlist summary:focus-visible { outline: 2px solid var(--graphite); outline-offset: 2px; }
+.qbody { display: grid; gap: 10px; padding: 4px 0 16px; }
+.qbody figure { margin: 0; }
+.qbody figcaption { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.qbody img { display: block; width: 100%; max-width: 640px; height: auto; background: #fff; border: 1px solid var(--rule); border-radius: 4px; }
+.explain { max-width: 70ch; line-height: 1.75; background: var(--surface); border-left: 3px solid var(--graphite); padding: 8px 12px; border-radius: 0 4px 4px 0; }
+.explain b { font-family: var(--font-mono); }
+.qlist .qid { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+.bubbles { display: inline-flex; gap: 4px; }
+.bubbles b { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--card-red); color: var(--card-red); font: 600 11px/17px var(--font-mono); text-align: center; }
+.bubbles b.on { background: var(--graphite); border-color: var(--graphite); color: var(--on-graphite); }
+.free { font-size: 12px; color: var(--card-red); border: 1px solid var(--card-red); border-radius: 3px; padding: 0 5px; }
+.stem { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 560px) { .qlist summary { grid-template-columns: auto minmax(0, 1fr) auto; } .qlist .stem { grid-column: 1 / -1; } }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .qbody img, :root:not([data-theme="light"]) .pcard img { filter: invert(.9) hue-rotate(180deg); } }
+:root[data-theme="dark"] .qbody img, :root[data-theme="dark"] .pcard img { filter: invert(.9) hue-rotate(180deg); }
+
+[hidden] { display: none !important; }
+.rv { display: inline-block; font-size: 11px; line-height: 1.5; color: var(--card-red); border: 1px solid var(--card-red); border-radius: 3px; padding: 0 4px; margin-left: 6px; white-space: nowrap; vertical-align: 1px; }
+.rvnote { font-size: 13px; color: var(--muted); border-left: 3px solid var(--card-red); padding: 4px 10px; margin: 0; max-width: 70ch; }
+.qfilter { font-size: 13px; color: var(--muted); display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+/* 讀書計畫 */
+.pctl { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; font-size: 14px; }
+.pctl label { display: inline-flex; gap: 6px; align-items: center; }
+.pctl input, .pctl select { font: inherit; font-size: 14px; padding: 4px 8px; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); color: var(--ink); }
+.pprog { height: 8px; background: var(--card-red-soft); border-radius: 4px; overflow: hidden; max-width: 520px; }
+.pprog span { display: block; height: 100%; background: var(--card-red); width: 0; }
+.pweeks { display: grid; gap: 6px; }
+.pweek { border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); }
+.pweek.cur { border-color: var(--card-red); }
+.pweek summary { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; padding: 8px 12px; cursor: pointer; font-size: 14px; }
+.pweek summary .pcount { margin-left: auto; color: var(--muted); }
+.ptag { font-size: 12px; border-radius: 3px; padding: 0 6px; border: 1px solid var(--rule); color: var(--muted); }
+.ptag.p1 { color: var(--ink); } .ptag.p2 { color: var(--up); border-color: var(--up); } .ptag.p3 { color: var(--card-red); border-color: var(--card-red); }
+.ptag.now { background: var(--card-red); border-color: var(--card-red); color: #fff; }
+.ptasks { list-style: none; margin: 0; padding: 0 12px 10px; display: grid; gap: 8px; }
+.ptasks li { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; font-size: 14px; border-top: 1px dashed var(--rule); padding-top: 8px; }
+.ptasks label { display: flex; gap: 8px; align-items: flex-start; cursor: pointer; min-width: 0; }
+.ptasks input { margin-top: 4px; accent-color: var(--card-red); }
+.ptasks .muted { font-size: 13px; }
+.ptasks .linkbtn { white-space: nowrap; padding: 0; }
+/* 章節重點筆記 */
+.notes { border: 1px solid var(--rule); border-left: 3px solid var(--card-red); border-radius: 6px; background: var(--surface); margin: 0 0 14px; }
+.notes summary { cursor: pointer; padding: 8px 12px; font-weight: 600; font-size: 14px; }
+.notes .nbody { padding: 0 14px 10px; font-size: 14px; line-height: 1.7; }
+.notes h4 { margin: 8px 0 4px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.notes ul { margin: 0; padding-left: 20px; }
+.notes li { margin: 2px 0; }
+.notes .trap li::marker { color: var(--card-red); }
+/* 練習模式 */
+.pcard { border: 1px solid var(--rule); background: var(--surface); border-radius: 8px; padding: 16px; display: grid; gap: 12px; }
+.pmeta { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; justify-content: space-between; }
+.pmeta .prog { font-family: var(--font-mono); color: var(--card-red); font-weight: 600; }
+.pcard figure { margin: 0; }
+.pcard details summary { cursor: pointer; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.pcard img { display: block; width: 100%; max-width: 680px; height: auto; background: #fff; border: 1px solid var(--rule); border-radius: 4px; }
+.pchoices { display: flex; gap: 12px; flex-wrap: wrap; }
+.pchoice { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--card-red); background: var(--surface); color: var(--card-red); font: 600 18px var(--font-mono); cursor: pointer; }
+.pchoice:hover:not(:disabled) { background: var(--card-red-soft); }
+.pchoice:disabled { cursor: default; opacity: .55; }
+.pchoice.picked { background: var(--card-red); color: #fff; opacity: 1; }
+.pchoice.correct { background: var(--up); border-color: var(--up); color: #fff; opacity: 1; }
+.pfeed { font-weight: 700; margin: 0; }
+.pfeed.ok { color: var(--up); } .pfeed.bad { color: var(--card-red); }
+.btn { font: inherit; font-size: 14px; border: 1px solid var(--card-red); background: var(--card-red); color: #fff; border-radius: 6px; padding: 7px 16px; cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--card-red); }
+.btn:disabled { opacity: .45; cursor: default; }
+.pstatus { font-size: 13px; color: var(--muted); margin: 0; }
+.pwrong { margin: 0; padding-left: 1.2em; font-size: 14px; display: grid; gap: 4px; }
+
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.note { font-size: 13px; color: var(--muted); max-width: 80ch; display: grid; gap: 6px; }
+.note p { margin: 0; }
+.panel-sub { font-size: 13.5px; color: var(--muted); margin: -6px 0 12px; }
+@media (prefers-reduced-motion: no-preference) { .wbar .fill, .share .bar { transition: width .25s ease; } }
+.wrap > *, .grid2 > * { min-width: 0; }
+.sibling { font-size: 13.5px; margin: 4px 0 0; }
+.sibling a { color: var(--card-red); font-weight: 700; }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">護理類 · 二技 · 108–115 學年度</span>
+    <h1>二技護理類考題分析</h1>
+    <p class="muted">依技專校院入學測驗中心公告的八年二技統一入學測驗護理類試題（四科選擇題共 1,600 題），結合 115 學年度各校二技護理系申請入學簡章的採計方式，排出目標校的準備優先順序。</p>
+    <p class="sibling">也有統測（四技）版：<a href="https://bgjd315-cloud.github.io/tvee-nursing/">統測護理類考題分析 →</a></p>
+  </header>
+
+  <section class="controls" aria-label="選擇目標校">
+    <div class="row"><span class="label">目標校</span><div class="row" id="schools"></div></div>
+    <div class="row"><span class="label">入學管道</span><span class="muted" style="font-size:13px;flex:1 1 220px;min-width:0" id="mode-hint"></span></div>
+  </section>
+
+  <div class="grid2">
+    <section>
+      <div class="sec-head"><h2>各科占總成績</h2><span class="tag">權重</span></div>
+      <p class="panel-sub" id="weight-sub"></p>
+      <div class="wbars" id="wbars"></div>
+      <div class="school-notes" id="school-notes"></div>
+    </section>
+    <section>
+      <div class="sec-head"><h2>優先準備清單</h2><span class="tag">排序</span></div>
+      <p class="panel-sub">依「八年平均配分 × 近三年趨勢 × 該科權重」排序。「占總成績」是該章每年平均配分換算成總成績的百分比。點一列可看該章歷屆題目，題目可展開截圖與解析。</p>
+      <div class="tabs" id="prio-filter" role="group" aria-label="清單範圍"></div>
+      <p class="panel-sub" id="prio-warn" hidden></p>
+      <div class="scroll"><table class="prio"><thead><tr><th>#</th><th>考科</th><th>章節／題型</th><th class="num">每年平均</th><th>近三年</th><th>占總成績</th></tr></thead><tbody id="prio"></tbody></table></div>
+      <button type="button" class="linkbtn" id="prio-more"></button>
+    </section>
+  </div>
+
+  <section id="explorer">
+    <div class="sec-head"><h2>各科章節熱度</h2><span class="tag">108–115</span></div>
+    <div class="tabs" id="subj-tabs" role="tablist" aria-label="考科"></div>
+    <p class="panel-sub" id="subj-sub"></p>
+    <div class="scroll"><table class="hm"><thead id="hm-head"></thead><tbody id="hm-body"></tbody></table></div>
+    <div class="legend" id="hm-legend"></div>
+    <div class="qpanel" id="qpanel"></div>
+  </section>
+
+  <section id="practice" aria-label="練習模式">
+    <div class="sec-head"><h2>練習模式</h2><span class="tag">作答</span></div>
+    <p class="panel-sub">從歷屆題目隨機出題，作答後立即對答案、看解析。答錯的題目會記進錯題本，之後答對就移出。</p>
+    <div id="p-setup" class="controls">
+      <div class="row"><span class="label">範圍</span><div class="row" id="p-scopes" role="group" aria-label="出題範圍"></div></div>
+      <div class="row"><span class="label">題數</span><div class="row" id="p-counts" role="group" aria-label="題數"></div></div>
+      <p class="pstatus" id="p-scope-hint"></p>
+      <div class="row"><button type="button" class="btn" id="p-start">開始練習</button></div>
+      <p class="pstatus" id="p-status"></p>
+    </div>
+    <div id="p-run" hidden></div>
+  </section>
+
+  <section id="plan" aria-label="讀書計畫">
+    <div class="sec-head"><h2>讀書計畫</h2><span class="tag">週進度</span></div>
+    <p class="panel-sub">依上方選的目標校，排出到二技統測前的每週進度：先依優先分數分配時數讀章節，再複習錯題，最後計時寫整份歷屆試卷。勾選完成的項目會記住。</p>
+    <div class="controls">
+      <div class="pctl">
+        <label>開始日期 <input type="date" id="plan-start"></label>
+        <label>二技統測日期 <input type="date" id="plan-exam"></label>
+        <label>每週讀書時數 <select id="plan-hours"><option>6</option><option>8</option><option>10</option><option>12</option><option>15</option><option>20</option></select> 小時</label>
+      </div>
+      <p class="pstatus">二技統測日期預設為 2027/4/24（預估，115 學年度與四技統測同日），請依技專校院入學測驗中心公告調整。</p>
+      <p class="pstatus" id="plan-summary" style="color:var(--ink)"></p>
+      <div class="pprog" aria-hidden="true"><span id="plan-bar"></span></div>
+      <p class="pstatus"><span id="plan-where"></span>　<button type="button" class="linkbtn" id="plan-reset" style="padding:0">清除進度</button></p>
+    </div>
+    <div class="pweeks" id="plan-weeks" style="margin-top:12px"></div>
+  </section>
+
+  <section class="note" aria-label="資料說明">
+    <div class="sec-head" style="margin-bottom:4px"><h2 style="font-size:16px">資料說明</h2></div>
+    <p>試題與公告答案來自技專校院入學測驗中心（108–115 學年度二技統一入學測驗護理類）；採計方式來自各校 115 學年度二技日間部申請入學簡章：國北護護理系、長庚護理系（甲類聯合招生）、弘光護理系、輔英護理系護理組 A 組。116 學年度簡章公告後需更新。中科大護理系目前查無二技招生，未列入。</p>
+    <p>章節與題型為 Claude 依題意初標的暫定分類，專業科目與國文需任課老師覆核；英文依試題本的大題分類（字彙、對話、綜合測驗、閱讀測驗）。</p>
+    <p>題目截圖取自測驗中心公告的試題本；108 年國文第 31–36 題所在頁為掃描圖，截圖依頁面位置人工裁切。逐題解析由 Claude 撰寫，已逐題比對公告答案，但推理與說明仍可能有誤，使用前請任課老師覆核；其中 <span id="rv-count"></span> 題標示「建議覆核」，展開後可看到原因。</p>
+    <p>二技無聯合登記分發，各校自辦申請入學。國北護另採書面資料 30%，未列入本頁的章節排序；長庚、弘光、輔英 A 組只看統測成績。各校同分參酌順序不同，見上方各校說明。</p>
+  </section>
+</div>
+
+<script>
+const D = /*__DATA__*/null;
+const YEARS = [108, 109, 110, 111, 112, 113, 114, 115];
+const SUBJ = [
+  { key: '國文', label: '國文' },
+  { key: '英文', label: '英文' },
+  { key: '專業一', label: '專一 解剖生理學' },
+  { key: '專業二', label: '專二 基本護理學' },
+];
+// 115 學年度二技日間部申請入學護理系：w 依序為 國、英、專一、專二；share 為統測占總成績的百分比
+const SCHOOLS = [
+  { id: 'ntunhs', name: '國北護', full: '國立臺北護理健康大學 護理系',
+    apply: { share: 70, w: [1, 1, 1, 1], quota: '依簡章', formula: '護理類統測四科平均 × 70% ＋ 書面資料 × 30%', tie: '' } },
+  { id: 'cgust', name: '長庚', full: '長庚科技大學 護理系（甲類聯合招生）',
+    apply: { share: 100, w: [1, 1, 1, 1], quota: '林口 294、嘉義 196', formula: '四科各 ×1，總分 400，採網路志願序分發', tie: '英文 → 國文 → 專一 → 專二 → 專科歷年成績' } },
+  { id: 'hk', name: '弘光', full: '弘光科技大學 護理系',
+    apply: { share: 100, w: [1, 1, 1, 1], quota: '356', formula: '四科原始分數加總，總分 400', tie: '專二 → 專一 → 英文 → 國文 → 專科歷年成績' } },
+  { id: 'fy', name: '輔英', full: '輔英科技大學 護理系護理組 A 組',
+    apply: { share: 100, w: [1, 1, 1, 1], quota: '210', formula: '統測加權成績 100%，各科 1 倍（B 組 210 名為書審，不採統測）', tie: '專二 → 專一 → 英文 → 國文' } },
+];
+for (const sc of SCHOOLS) sc.dist = sc.apply;   // 二技只有申請入學，沿用範本的管道切換時兩者相同
+
+const state = { schools: new Set(['ntunhs']), mode: 'apply', subj: '專業二', chapter: null, showAll: false, query: '', pfilter: 'pro', onlyFlag: false };
+// 國文、英文依題型或大題分類，單位比專業科目的章節大，混排會被大題型擠滿，因此清單預設只排專業科目
+const PFILTERS = [{ id: 'pro', label: '專業科目' }, ...SUBJ.map(s => ({ id: s.key, label: s.label })), { id: 'all', label: '四科混排' }];
+try {
+  const saved = JSON.parse(localStorage.getItem('tvee2y-nursing') || 'null');
+  if (saved) {
+    if (Array.isArray(saved.schools) && saved.schools.length) state.schools = new Set(saved.schools.filter(id => SCHOOLS.some(s => s.id === id)));
+    if (saved.mode === 'apply' || saved.mode === 'dist') state.mode = saved.mode;
+    if (SUBJ.some(s => s.key === saved.subj)) state.subj = saved.subj;
+  }
+  if (!state.schools.size) state.schools.add('ntunhs');
+} catch (e) {}
+function save() {
+  try { localStorage.setItem('tvee2y-nursing', JSON.stringify({ schools: [...state.schools], mode: state.mode, subj: state.subj })); } catch (e) {}
+}
+
+// ---- 章節統計 ----
+const CH = (() => {
+  const m = new Map();
+  for (const s of SUBJ) for (const [code, name] of Object.entries(D.chapters[s.key])) {
+    m.set(s.key + '|' + code, { subj: s.key, code, name, pts: Object.fromEntries(YEARS.map(y => [y, 0])), qs: [], fixed: false });
+  }
+  for (const q of D.questions) {
+    const c = m.get(q[2] + '|' + q[4]);
+    if (!c) continue;
+    c.pts[q[1]] += q[6];
+    c.qs.push(q);
+  }
+  for (const f of D.fixed) {
+    const c = m.get(f.subject + '|' + f.code);
+    for (const y of YEARS) c.pts[y] += f.pts[String(y)] || 0;
+    c.fixed = true;
+  }
+  for (const c of m.values()) {
+    const v = YEARS.map(y => c.pts[y]);
+    c.avg = v.reduce((a, b) => a + b, 0) / YEARS.length;
+    c.early = v.slice(0, -3).reduce((a, b) => a + b, 0) / (v.length - 3);
+    c.late = v.slice(-3).reduce((a, b) => a + b, 0) / 3;
+    c.diff = c.late - c.early;
+    c.T = c.early > 0 ? Math.min(1.5, Math.max(0.5, c.late / c.early)) : (c.late > 0 ? 1.5 : 1);
+  }
+  return [...m.values()];
+})();
+
+function subjIndex(key) { return SUBJ.findIndex(s => s.key === key); }
+function subjLabel(key) { return SUBJ[subjIndex(key)].label; }
+
+// 各科占總成績的百分比；多校時取平均
+function weights() {
+  const sel = SCHOOLS.filter(s => state.schools.has(s.id));
+  const out = SUBJ.map(() => 0);
+  for (const s of sel) {
+    const cfg = s[state.mode];
+    const total = cfg.w.reduce((a, b) => a + b, 0);
+    const share = state.mode === 'apply' ? cfg.share : 100;
+    cfg.w.forEach((w, i) => { out[i] += share * w / total / sel.length; });
+  }
+  return out;
+}
+
+function trendHTML(c) {
+  const d = c.diff;
+  if (d >= 1) return `<span class="trend up" title="108–112 年平均 ${c.early.toFixed(1)} 分，113–115 年平均 ${c.late.toFixed(1)} 分">▲ ${d.toFixed(1)}</span>`;
+  if (d <= -1) return `<span class="trend down" title="108–112 年平均 ${c.early.toFixed(1)} 分，113–115 年平均 ${c.late.toFixed(1)} 分">▼ ${Math.abs(d).toFixed(1)}</span>`;
+  return `<span class="trend flat">持平</span>`;
+}
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+
+// ---- 控制列 ----
+function renderControls() {
+  const box = document.getElementById('schools');
+  box.innerHTML = SCHOOLS.map(s => `<button type="button" class="chip" id="school-${s.id}" data-id="${s.id}" aria-pressed="${state.schools.has(s.id)}" title="${esc(s.full)}">${esc(s.name)}</button>`).join('');
+  box.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => {
+    const id = b.dataset.id;
+    if (state.schools.has(id)) { if (state.schools.size > 1) state.schools.delete(id); }
+    else state.schools.add(id);
+    save(); renderAll();
+  }));
+  document.querySelectorAll('.seg button').forEach(b => {
+    b.setAttribute('aria-pressed', String(b.dataset.mode === state.mode));
+    b.onclick = () => { state.mode = b.dataset.mode; save(); renderAll(); };
+  });
+  document.getElementById('mode-hint').textContent = '二技日間部申請入學（各校自辦）：國北護統測占 70%，長庚、弘光、輔英 A 組統測占 100%';
+}
+
+// ---- 權重 ----
+function renderWeights() {
+  const W = weights();
+  const n = state.schools.size;
+  document.getElementById('weight-sub').textContent = (n > 1 ? `${n} 校平均。` : '') +
+    '申請入學總成績中，各科二技統測分數換算後的占比。';
+  const max = Math.max(...W, 1);
+  document.getElementById('wbars').innerHTML = SUBJ.map((s, i) => `
+    <div class="wbar${W[i] < 0.05 ? ' zero' : ''}">
+      <span>${esc(s.label)}</span>
+      <span class="track"><span class="fill" style="width:${(W[i] / max * 100).toFixed(1)}%"></span></span>
+      <span class="num">${W[i] < 0.05 ? '0' : W[i].toFixed(1)}%</span>
+    </div>`).join('');
+  const sel = SCHOOLS.filter(s => state.schools.has(s.id));
+  document.getElementById('school-notes').innerHTML = sel.map(s => `<div class="sn"><b>${esc(s.full)}</b>　名額 <span class="num">${esc(s.apply.quota)}</span><br>${esc(s.apply.formula)}${s.apply.tie ? `<br>同分參酌：${esc(s.apply.tie)}` : ''}</div>`).join('');
+}
+
+// ---- 優先清單 ----
+function priorityList() {
+  const W = weights();
+  const inScope = c => state.pfilter === 'all' ? true : state.pfilter === 'pro' ? (c.subj === '專業一' || c.subj === '專業二') : c.subj === state.pfilter;
+  return CH.filter(inScope).map(c => {
+    const w = W[subjIndex(c.subj)];
+    return { c, share: c.avg * w / 100, score: c.avg * c.T * w / 100 };
+  }).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
+}
+
+function renderPriority() {
+  const W = weights();
+  const fbox = document.getElementById('prio-filter');
+  fbox.innerHTML = PFILTERS.map(f => `<button type="button" class="chip" id="pf-${f.id}" data-id="${f.id}" aria-pressed="${f.id === state.pfilter}">${esc(f.label)}</button>`).join('');
+  fbox.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { state.pfilter = b.dataset.id; state.showAll = false; renderPriority(); renderPracticeSetup(); }));
+  const warn = document.getElementById('prio-warn');
+  warn.hidden = state.pfilter !== 'all';
+  warn.textContent = '國文、英文以題型或大題為單位（如英文「閱讀測驗」每年 25 分），比專業科目的章節大得多，混排時會排在前面；比較時請以同一科為準。';
+  const list = priorityList();
+  const shown = state.showAll ? list : list.slice(0, 15);
+  const maxShare = Math.max(...list.map(x => x.share), 0.01);
+  const body = document.getElementById('prio');
+  if (!list.length) {
+    body.innerHTML = `<tr><td colspan="6" class="muted">目前選的學校不採計這一科。</td></tr>`;
+    document.getElementById('prio-more').hidden = true;
+    return;
+  }
+  body.innerHTML = shown.map((x, i) => `
+    <tr class="clickable" tabindex="0" data-subj="${esc(x.c.subj)}" data-code="${esc(x.c.code)}">
+      <td class="rank">${String(i + 1).padStart(2, '0')}</td>
+      <td><span class="subj">${esc(subjLabel(x.c.subj))}</span></td>
+      <td>${esc(x.c.name)}</td>
+      <td class="num">${x.c.avg.toFixed(1)} 分</td>
+      <td>${trendHTML(x.c)}</td>
+      <td><span class="share"><span class="bar" style="width:${(x.share / maxShare * 100).toFixed(1)}%"></span><span class="num">${x.share.toFixed(2)}%</span></span></td>
+    </tr>`).join('');
+  body.querySelectorAll('tr').forEach(tr => {
+    const go = () => { state.subj = tr.dataset.subj; state.chapter = tr.dataset.code; state.query = ''; save(); renderExplorer(); document.getElementById('explorer').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+    tr.addEventListener('click', go);
+    tr.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+  });
+  const more = document.getElementById('prio-more');
+  more.hidden = list.length <= 15;
+  more.textContent = state.showAll ? '只顯示前 15 名' : `顯示全部 ${list.length} 項`;
+  more.onclick = () => { state.showAll = !state.showAll; renderPriority(); };
+}
+
+// ---- 各科熱度表 ----
+function renderExplorer() {
+  const tabs = document.getElementById('subj-tabs');
+  tabs.innerHTML = SUBJ.map(s => `<button type="button" role="tab" class="chip" id="tab-${s.key}" aria-pressed="${s.key === state.subj}" aria-selected="${s.key === state.subj}" data-key="${s.key}">${esc(s.label)}</button>`).join('');
+  tabs.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { state.subj = b.dataset.key; state.chapter = null; state.query = ''; save(); renderExplorer(); }));
+
+  const rows = CH.filter(c => c.subj === state.subj).sort((a, b) => b.avg - a.avg);
+  const qn = D.questions.filter(q => q[2] === state.subj);
+  const per = qn.length ? qn[0][6] : 2;
+  document.getElementById('subj-sub').textContent = {
+    '國文': '國文依題型分類（二技國文以閱讀題組為主，約 30 題為文言或白話閱讀）。每年 50 題、每題 2 分。',
+    '英文': '英文依試題本的大題分類。每年 50 題、每題 2 分；113 年起綜合測驗 12 題、閱讀測驗 13 題。',
+    '專業一': '專業科目(一) 解剖生理學，依器官系統分類（每年第 1–25 題解剖、第 26–50 題生理）。每年 50 題、每題 2 分。',
+    '專業二': '專業科目(二) 基本護理學，依主題分類。每年 50 題、每題 2 分。',
+  }[state.subj] + ' 格子內為該年配分；點一列看題目。';
+
+  const max = Math.max(...rows.flatMap(c => YEARS.map(y => c.pts[y])), 1);
+  document.getElementById('hm-head').innerHTML = `<tr><th>章節／題型</th>${YEARS.map(y => `<th>${y}</th>`).join('')}<th style="text-align:right;padding-right:8px">平均</th><th style="text-align:right;padding-right:8px">近三年</th></tr>`;
+  const body = document.getElementById('hm-body');
+  body.innerHTML = rows.map(c => `
+    <tr tabindex="0" data-code="${esc(c.code)}" aria-selected="${c.code === state.chapter}">
+      <td class="cname">${esc(c.name)}</td>
+      ${YEARS.map(y => {
+        const v = c.pts[y], a = v / max;
+        const bg = v ? `background:color-mix(in srgb, var(--graphite) ${Math.round(12 + a * 78)}%, transparent);` : '';
+        const fg = a > 0.5 ? 'color:var(--on-graphite);' : (v ? '' : 'color:var(--muted);');
+        return `<td class="cell"><span style="${bg}${fg}" title="${y} 年 ${esc(c.name)}：${v} 分">${v || '·'}</span></td>`;
+      }).join('')}
+      <td class="avg">${c.avg.toFixed(1)}</td>
+      <td class="tr">${trendHTML(c)}</td>
+    </tr>`).join('');
+  body.querySelectorAll('tr').forEach(tr => {
+    const pick = () => { state.chapter = state.chapter === tr.dataset.code ? null : tr.dataset.code; state.query = ''; renderExplorer(); };
+    tr.addEventListener('click', pick);
+    tr.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+  });
+  document.getElementById('hm-legend').innerHTML = `每格為該年配分　<i style="background:color-mix(in srgb, var(--graphite) 14%, transparent)"></i><span>少</span><i style="background:color-mix(in srgb, var(--graphite) 52%, transparent)"></i><i style="background:var(--graphite)"></i><span>多（最高 ${max} 分）</span>`;
+  renderQuestions();
+  renderPracticeSetup();
+}
+
+function bubbles(ans) {
+  if (ans.includes('送分')) return '<span class="free">送分</span>';
+  return `<span class="bubbles" aria-label="答案 ${esc(ans)}">${['A', 'B', 'C', 'D'].map(l => `<b class="${ans.includes(l) ? 'on' : ''}">${l}</b>`).join('')}</span>`;
+}
+
+// 截圖依試卷打包，第一次展開該卷的題目時才下載
+const BUNDLES = {};
+function bundle(file) {
+  if (!BUNDLES[file]) BUNDLES[file] = fetch(file).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .catch(err => { delete BUNDLES[file]; throw err; });
+  return BUNDLES[file];
+}
+
+function notesHtml(c) {
+  const n = D.notes && D.notes[c.code];
+  if (!n) return '';
+  const li = xs => xs.map(t => `<li>${esc(t)}</li>`).join('');
+  return `<details class="notes" open><summary>本章重點筆記</summary><div class="nbody">
+    <h4>必讀重點</h4><ul>${li(n.key)}</ul>
+    ${n.trap && n.trap.length ? `<h4>常見陷阱</h4><ul class="trap">${li(n.trap)}</ul>` : ''}
+    <p class="muted" style="margin:8px 0 0;font-size:12px">由 Claude 依 108–115 年歷屆題目整理，請搭配課本與任課老師的講義使用。</p></div></details>`;
+}
+
+function renderQuestions() {
+  const panel = document.getElementById('qpanel');
+  const c = CH.find(x => x.subj === state.subj && x.code === state.chapter);
+  if (!c) {
+    const top = CH.filter(x => x.subj === state.subj).sort((a, b) => b.avg - a.avg)[0];
+    panel.innerHTML = `<p class="muted" style="margin:0">點熱度表的任一列，這裡會列出該章節 108–115 年的所有題目與公告答案，點題目可展開截圖。例如「${esc(top.name)}」八年共 ${top.qs.length || '固定配分'}${top.qs.length ? ' 題' : ''}。</p>`;
+    return;
+  }
+  if (c.fixed) {
+    panel.innerHTML = `<div class="qhead"><h3>${esc(c.name)}</h3></div>${notesHtml(c)}<p class="muted" style="margin:0">非選擇題，每年固定配分：${YEARS.map(y => `${y} 年 ${c.pts[y]} 分`).join('、')}。題目內容請見測驗中心公告的試題本。</p>`;
+    return;
+  }
+  panel.innerHTML = `<div class="qhead"><h3>${esc(c.name)}　<span class="muted mono" style="font-size:14px;font-weight:400">${c.qs.length} 題</span></h3>
+    <span class="row"><label class="qfilter"><input type="checkbox" id="qflag"${state.onlyFlag ? ' checked' : ''}>只看建議覆核（${c.qs.filter(x => D.flags[x[0]]).length}）</label>
+    <input type="search" id="qsearch" placeholder="搜尋題幹關鍵字" aria-label="搜尋題幹關鍵字" value="${esc(state.query)}"></span></div>
+    ${notesHtml(c)}<ul class="qlist" id="qlist"></ul>`;
+  const draw = () => {
+    const q = state.query.trim();
+    const items = c.qs.filter(x => (!q || x[7].includes(q)) && (!state.onlyFlag || D.flags[x[0]])).sort((a, b) => b[1] - a[1] || a[3] - b[3]);
+    document.getElementById('qlist').innerHTML = items.length
+      ? items.map(x => `<li><details data-id="${esc(x[0])}"><summary><span class="qid">${x[1]} 年 第 ${x[3]} 題</span>${bubbles(x[5])}<span class="stem">${esc(x[7])}…${D.flags[x[0]] ? '<span class="rv">建議覆核</span>' : ''}</span></summary><div class="qbody"></div></details></li>`).join('')
+      : `<li class="empty"><span class="muted">${q ? `沒有題幹含「${esc(q)}」的題目。` : '這個章節沒有建議覆核的題目。'}</span></li>`;
+    document.querySelectorAll('#qlist details').forEach(d => d.addEventListener('toggle', () => {
+      const body = d.querySelector('.qbody');
+      if (!d.open || body.childElementCount) return;
+      const e = D.ex[d.dataset.id];
+      if (!e) { body.innerHTML = '<p class="muted">此題尚無解析。</p>'; return; }
+      const [text, img, group] = e;
+      const ans = c.qs.find(x => x[0] === d.dataset.id)[5];
+      body.innerHTML = (group ? `<figure><figcaption>題組文章</figcaption><img data-ref="${esc(group)}" alt="題組共同文章截圖"></figure>` : '')
+        + `<figure><figcaption>題目截圖</figcaption><img data-ref="${esc(img)}" alt="${esc(d.dataset.id)} 題目截圖"><p class="muted img-wait" style="margin:4px 0 0;font-size:12px">截圖載入中…</p></figure>`
+        + `<div class="explain"><b>答案 ${esc(ans)}</b>　${esc(text || '解析尚未撰寫，請先以公告答案對照。')}</div>`
+        + (D.flags[d.dataset.id] ? `<p class="rvnote">建議優先覆核：${esc(D.flags[d.dataset.id])}</p>` : '');
+      body.querySelectorAll('img[data-ref]').forEach(im => {
+        const [file, name] = im.dataset.ref.split('#');
+        bundle(file).then(b => { im.src = b[name]; body.querySelector('.img-wait')?.remove(); })
+          .catch(() => { const w = body.querySelector('.img-wait'); if (w) w.textContent = '截圖載入失敗，請重新整理頁面。'; });
+      });
+    }));
+  };
+  draw();
+  document.getElementById('qsearch').addEventListener('input', e => { state.query = e.target.value; draw(); });
+  document.getElementById('qflag').addEventListener('change', e => { state.onlyFlag = e.target.checked; draw(); });
+}
+
+// ---- 練習模式 ----
+// 錯題本：每位使用者一份，存在本頁資料庫的個人區（別人看不到）；無法使用時存在這台裝置的瀏覽器。
+const book = { wrong: {}, ref: null, where: 'local' };
+try { const w = JSON.parse(localStorage.getItem('tvee2y-nursing-wrong') || 'null'); if (w && typeof w === 'object') book.wrong = w; } catch (e) {}
+let saving = Promise.resolve();
+function persistBook() {
+  try { localStorage.setItem('tvee2y-nursing-wrong', JSON.stringify(book.wrong)); } catch (e) {}
+  if (!book.ref) return;
+  const body = { wrong: { ...book.wrong }, updated: Date.now() };
+  saving = saving.then(() => book.ref.set(body)).catch(err => {
+    if (err && err.code === 'unavailable') return;
+    book.ref = null; book.where = 'local'; renderPracticeStatus();   // 沒有寫入權限：本次改存瀏覽器
+  });
+}
+(async () => {
+  if (!window.claude || !window.claude.use) return;
+  const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+  const id = user ? await user.id() : null;
+  if (!db || !id) return;
+  try {
+    const ref = db.doc('data/users/' + id + '/practice');
+    const snap = await ref.get();
+    const remote = snap.exists ? (snap.data().wrong || {}) : {};
+    const merged = { ...remote };
+    for (const [k, v] of Object.entries(book.wrong)) merged[k] = Math.max(v, merged[k] || 0);
+    const changed = Object.keys(merged).some(k => merged[k] !== remote[k]);
+    book.wrong = merged; book.ref = ref; book.where = 'db';
+    if (changed) persistBook();
+    else { try { localStorage.setItem('tvee2y-nursing-wrong', JSON.stringify(book.wrong)); } catch (e) {} }
+  } catch (e) { /* 維持瀏覽器儲存 */ }
+  renderPracticeSetup();
+})();
+
+const P = { scope: 'prio', count: 10, run: null };
+const PSCOPES = [
+  { id: 'prio', label: '優先清單前 10 項' },
+  { id: 'chapter', label: '熱度表選的章節' },
+  { id: 'subj', label: '熱度表目前考科' },
+  { id: 'wrong', label: '錯題本' },
+];
+const QBY = new Map(D.questions.map(q => [q[0], q]));
+const playable = q => !q[5].includes('送分') && D.ex[q[0]];
+
+function practicePool() {
+  if (P.scope === 'paper') {
+    const { y, s } = P.paper;
+    return { qs: D.questions.filter(q => q[1] === y && q[2] === s && playable(q)).sort((a, b) => a[3] - b[3]), hint: `${y} 年 ${subjLabel(s)} 整份試卷，依題號順序作答` };
+  }
+  if (P.scope === 'prio') {
+    const top = priorityList().filter(x => !x.c.fixed).slice(0, 10);
+    return { qs: top.flatMap(x => x.c.qs).filter(playable), hint: top.length ? `目前優先清單（${PFILTERS.find(f => f.id === state.pfilter).label}）前 ${top.length} 項：${top.map(x => x.c.name).join('、')}` : '目前選的學校與清單範圍沒有可練習的章節。' };
+  }
+  if (P.scope === 'chapter') {
+    const c = CH.find(x => x.subj === state.subj && x.code === state.chapter);
+    if (!c || c.fixed) return { qs: [], hint: '先在上方熱度表點選一個章節。' };
+    return { qs: c.qs.filter(playable), hint: `${subjLabel(c.subj)}・${c.name}` };
+  }
+  if (P.scope === 'subj') return { qs: D.questions.filter(q => q[2] === state.subj && playable(q)), hint: `${subjLabel(state.subj)} 全部題目（在熱度表上方切換考科）` };
+  const ids = Object.keys(book.wrong).filter(id => QBY.has(id));
+  return { qs: ids.map(id => QBY.get(id)).filter(playable), hint: ids.length ? '錯題本裡的題目，答錯次數多的先出。' : '錯題本是空的，先練幾題吧。' };
+}
+
+function renderPracticeStatus() {
+  const el = document.getElementById('p-status');
+  if (!el) return;
+  el.textContent = `錯題本 ${Object.keys(book.wrong).length} 題・` + (book.where === 'db' ? '已存到你的帳號，換裝置也看得到，其他人看不到' : '存在這台裝置的瀏覽器');
+}
+
+function renderPracticeSetup() {
+  const sc = document.getElementById('p-scopes');
+  if (!sc) return;
+  sc.innerHTML = PSCOPES.map(x => `<button type="button" class="chip" data-id="${x.id}" aria-pressed="${x.id === P.scope}">${esc(x.label)}${x.id === 'wrong' ? `（${Object.keys(book.wrong).length}）` : ''}</button>`).join('');
+  sc.querySelectorAll('button').forEach(b => b.onclick = () => { P.scope = b.dataset.id; renderPracticeSetup(); });
+  const cc = document.getElementById('p-counts');
+  cc.innerHTML = [10, 20, 50].map(n => `<button type="button" class="chip" data-n="${n}" aria-pressed="${n === P.count}">${n} 題</button>`).join('');
+  cc.querySelectorAll('button').forEach(b => b.onclick = () => { P.count = +b.dataset.n; renderPracticeSetup(); });
+  const pool = practicePool();
+  document.getElementById('p-scope-hint').textContent = pool.hint + (pool.qs.length ? `（共 ${pool.qs.length} 題可出）` : '');
+  const start = document.getElementById('p-start');
+  start.disabled = !pool.qs.length;
+  start.onclick = startPractice;
+  renderPracticeStatus();
+}
+
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+function startPractice() {
+  let qs = practicePool().qs.slice();
+  if (P.scope !== 'paper') qs = shuffle(qs);
+  if (P.scope === 'wrong') qs.sort((a, b) => (book.wrong[b[0]] || 0) - (book.wrong[a[0]] || 0));
+  P.run = { qs: P.scope === 'paper' ? qs : qs.slice(0, P.count), i: 0, right: 0, missed: [], answered: false };
+  document.getElementById('p-setup').hidden = true;
+  document.getElementById('p-run').hidden = false;
+  renderCard();
+  document.getElementById('practice').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function setImg(im, ref) {
+  const [file, name] = ref.split('#');
+  bundle(file).then(b => { im.src = b[name]; }).catch(() => { im.alt = '截圖載入失敗，請重新整理頁面'; });
+}
+
+function renderCard() {
+  const R = P.run, box = document.getElementById('p-run');
+  if (R.i >= R.qs.length) return renderSummary(false);
+  const q = R.qs[R.i], [, img, group] = D.ex[q[0]];
+  R.answered = false;
+  box.innerHTML = `<div class="pcard">
+    <div class="pmeta"><span class="prog">第 ${R.i + 1} / ${R.qs.length} 題</span>
+      <span class="muted" style="font-size:13px">${q[1]} 年 ${esc(subjLabel(q[2]))} 第 ${q[3]} 題・${esc(D.chapters[q[2]][q[4]] || '')}</span>
+      <button type="button" class="linkbtn" id="p-quit">結束練習</button></div>
+    ${group ? '<details open><summary>題組文章</summary><img id="p-gimg" alt="題組共同文章截圖"></details>' : ''}
+    <figure><img id="p-img" alt="題目截圖"></figure>
+    <div class="pchoices" role="group" aria-label="選擇答案（可按鍵盤 A–D 或 1–4）">${['A', 'B', 'C', 'D'].map(l => `<button type="button" class="pchoice" data-l="${l}" aria-label="選 ${l}">${l}</button>`).join('')}</div>
+    <div id="p-after" hidden></div>
+  </div>`;
+  setImg(document.getElementById('p-img'), img);
+  if (group) setImg(document.getElementById('p-gimg'), group);
+  box.querySelectorAll('.pchoice').forEach(b => b.onclick = () => answer(b.dataset.l));
+  document.getElementById('p-quit').onclick = () => renderSummary(true);
+}
+
+function answer(l) {
+  const R = P.run;
+  if (R.answered) return;
+  R.answered = true;
+  const q = R.qs[R.i], ans = q[5], ok = ans.includes(l), [text] = D.ex[q[0]];
+  document.querySelectorAll('.pchoice').forEach(b => {
+    b.disabled = true;
+    if (ans.includes(b.dataset.l)) b.classList.add('correct');
+    else if (b.dataset.l === l) b.classList.add('picked');
+  });
+  if (ok) { R.right++; if (book.wrong[q[0]]) { delete book.wrong[q[0]]; persistBook(); } }
+  else { R.missed.push(q); book.wrong[q[0]] = (book.wrong[q[0]] || 0) + 1; persistBook(); }
+  const after = document.getElementById('p-after');
+  after.hidden = false;
+  const multi = ans.length > 1 ? `（公告 ${ans.split('').join('、')} 皆給分）` : '';
+  after.innerHTML = `<p class="pfeed ${ok ? 'ok' : 'bad'}" role="status">${ok ? '答對了' : `答錯了，正確答案是 ${esc(ans)}`}${esc(multi)}</p>
+    ${text ? `<div class="explain" style="margin-top:8px">${esc(text)}</div>` : ''}
+    ${D.flags[q[0]] ? `<p class="rvnote" style="margin-top:8px">建議優先覆核：${esc(D.flags[q[0]])}</p>` : ''}
+    <div class="row" style="margin-top:12px"><button type="button" class="btn" id="p-next">${R.i + 1 < R.qs.length ? '下一題' : '看結果'}</button></div>`;
+  const next = document.getElementById('p-next');
+  next.onclick = () => { R.i++; renderCard(); document.getElementById('practice').scrollIntoView({ block: 'start' }); };
+  next.focus({ preventScroll: true });
+}
+
+function renderSummary(early) {
+  const R = P.run, done = R.i + (early && R.answered ? 1 : 0);
+  const box = document.getElementById('p-run');
+  const nWrong = Object.keys(book.wrong).length;
+  box.innerHTML = `<div class="pcard">
+    <h3>${early ? '練習結束' : '完成'}：答對 <span class="mono">${R.right} / ${done}</span> 題</h3>
+    ${R.missed.length ? `<p class="pstatus">這次答錯的題目已記進錯題本：</p><ol class="pwrong">${R.missed.map(q => `<li>${q[1]} 年 ${esc(subjLabel(q[2]))} 第 ${q[3]} 題（答案 ${esc(q[5])}）・${esc(D.chapters[q[2]][q[4]] || '')}</li>`).join('')}</ol>` : (done ? '<p class="pstatus">這次全部答對。</p>' : '')}
+    <div class="row">
+      <button type="button" class="btn" id="p-again">同範圍再練一次</button>
+      <button type="button" class="btn ghost" id="p-wrong" ${nWrong ? '' : 'disabled'}>練錯題本（${nWrong}）</button>
+      <button type="button" class="btn ghost" id="p-back">回到設定</button>
+    </div></div>`;
+  const back = () => { P.run = null; box.hidden = true; document.getElementById('p-setup').hidden = false; renderPracticeSetup(); };
+  document.getElementById('p-back').onclick = back;
+  document.getElementById('p-again').onclick = () => { back(); startPractice(); };
+  document.getElementById('p-wrong').onclick = () => { P.scope = 'wrong'; back(); startPractice(); };
+}
+
+document.addEventListener('keydown', e => {
+  if (!P.run || P.run.answered || (e.target.closest && e.target.closest('input, textarea')) || !document.querySelector('.pchoice')) return;
+  const k = e.key.toUpperCase();
+  const l = { A: 'A', B: 'B', C: 'C', D: 'D', 1: 'A', 2: 'B', 3: 'C', 4: 'D' }[k];
+  if (l && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); answer(l); }
+});
+
+document.getElementById('rv-count').textContent = Object.keys(D.flags).length;
+// ---- 讀書計畫 ----
+// 依目前選的目標校、入學管道排出每週進度：第一輪（依優先分數分配時數讀章節）→ 複習（錯題本、優先清單）→ 衝刺（整份歷屆試卷）。
+// 勾選紀錄與設定：每位使用者一份，存在本頁資料庫的個人區；無法使用時存在這台裝置的瀏覽器。
+const DAY = 86400000;
+function ymd(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function parseYmd(s) { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; }
+function mondayOf(d) { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; }
+const md = d => `${d.getMonth() + 1}/${d.getDate()}`;
+
+const plan = { done: {}, start: ymd(mondayOf(new Date())), exam: '2027-04-24', hours: 10, ref: null, where: 'local' };
+try {
+  const s = JSON.parse(localStorage.getItem('tvee2y-nursing-plan') || 'null');
+  if (s && typeof s === 'object') {
+    if (s.done && typeof s.done === 'object') plan.done = s.done;
+    if (parseYmd(s.start)) plan.start = s.start;
+    if (parseYmd(s.exam)) plan.exam = s.exam;
+    if ([6, 8, 10, 12, 15, 20].includes(s.hours)) plan.hours = s.hours;
+  }
+} catch (e) {}
+let planSaving = Promise.resolve(), planTimer = null;
+function planBody() { return { done: { ...plan.done }, start: plan.start, exam: plan.exam, hours: plan.hours, updated: Date.now() }; }
+function persistPlan() {
+  try { localStorage.setItem('tvee2y-nursing-plan', JSON.stringify(planBody())); } catch (e) {}
+  if (!plan.ref) return;
+  clearTimeout(planTimer);   // 連續勾選時合併成一次寫入
+  planTimer = setTimeout(() => {
+    const body = planBody();
+    planSaving = planSaving.then(() => plan.ref.set(body)).catch(err => {
+      if (err && err.code === 'unavailable') return;
+      plan.ref = null; plan.where = 'local'; renderPlan();
+    });
+  }, 600);
+}
+(async () => {
+  if (!window.claude || !window.claude.use) return;
+  const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+  const id = user ? await user.id() : null;
+  if (!db || !id) return;
+  try {
+    const ref = db.doc('data/users/' + id + '/plan');
+    const snap = await ref.get();
+    if (snap.exists) {
+      const r = snap.data();
+      plan.done = { ...(r.done || {}), ...plan.done };
+      if (parseYmd(r.start)) plan.start = r.start;
+      if (parseYmd(r.exam)) plan.exam = r.exam;
+      if (r.hours) plan.hours = r.hours;
+    }
+    plan.ref = ref; plan.where = 'db';
+    if (!snap.exists ? Object.keys(plan.done).length : true) persistPlan();
+  } catch (e) { /* 維持瀏覽器儲存 */ }
+  renderPlan();
+})();
+
+function buildPlan() {
+  const start = mondayOf(parseYmd(plan.start) || new Date()), exam = parseYmd(plan.exam);
+  if (!exam || exam <= start) return { error: '二技統測日期需晚於開始日期。' };
+  const W = Math.ceil((exam - start) / DAY / 7);
+  if (W < 6) return { error: '距離二技統測不到 6 週，建議直接用「優先清單」與「錯題本」練習。' };
+  const S = Math.max(2, Math.round(W * 0.15)), R = Math.max(2, Math.round(W * 0.2)), L = W - S - R;
+  const H = plan.hours, Wt = weights();
+  const subjOn = SUBJ.filter((s, i) => Wt[i] >= 0.05).map(s => s.key);
+  // 第一輪：所有採計科目的章節，依「平均配分 × 趨勢 × 權重」分配時數，分數高的先讀
+  const items = CH.filter(c => subjOn.includes(c.subj)).map(c => ({ c, score: c.avg * c.T * Wt[subjIndex(c.subj)] })).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
+  const total = items.reduce((a, x) => a + x.score, 0), budget = L * H;
+  const weeks = Array.from({ length: W }, (_, i) => ({ i, from: new Date(start.getTime() + i * 7 * DAY), phase: i < L ? 1 : i < L + R ? 2 : 3, tasks: [] }));
+  // 各科依優先分數排出章節佇列；每次挑「進度比例最落後」的科目讀約 2 小時，讓每週混合數科、各科同步推進
+  const queues = {};
+  for (const { c, score } of items) (queues[c.subj] = queues[c.subj] || []).push({ c, need: Math.max(1, Math.round(budget * score / total * 2) / 2), part: 0 });
+  const tot = {}, left0 = {};
+  for (const k in queues) tot[k] = left0[k] = queues[k].reduce((a, x) => a + x.need, 0);
+  for (let wi = 0; wi < L; wi++) {
+    let cap = H;
+    const byKey = new Map();
+    while (cap > 0.01) {
+      const ks = Object.keys(queues).filter(k => queues[k].length);
+      if (!ks.length) break;
+      ks.sort((a, b) => left0[b] / tot[b] - left0[a] / tot[a]);
+      const k = ks[0], it = queues[k][0], take = Math.min(2, it.need, cap);
+      const key = `L-${it.c.subj}-${it.c.code}-${it.part}`;
+      if (byKey.has(key)) byKey.get(key).hours += take;
+      else byKey.set(key, { key, it, hours: take, cont: it.part > 0 });
+      it.need -= take; left0[k] -= take; cap -= take;
+      if (it.need <= 0.01) queues[k].shift();
+    }
+    for (const t of byKey.values()) t.it.part++;
+    for (const { key, it, hours, cont } of byKey.values()) {
+      const c = it.c;
+      const sub = c.fixed ? (c.code === 'C99' ? '寫一篇限時作文並自評' : '練習填充、句子重組、中譯英各一回') : `讀重點後練本章歷屆題（${c.qs.length} 題）`;
+      weeks[wi].tasks.push({ key, text: `${subjLabel(c.subj)}・${c.name}${cont ? '（續）' : ''}`, sub: `約 ${hours} 小時：${sub}`, act: c.fixed ? null : { kind: 'chapter', subj: c.subj, code: c.code } });
+    }
+  }
+  // 複習：錯題本 + 優先清單
+  for (let i = L; i < L + R; i++) {
+    weeks[i].tasks.push({ key: `R-${i}-wrong`, text: '錯題本全部重做一次', sub: '答對的題目會自動移出錯題本', act: { kind: 'wrong' } });
+    weeks[i].tasks.push({ key: `R-${i}-prio`, text: '優先清單前 10 項隨機練 50 題', sub: '答錯的題目會記進錯題本', act: { kind: 'prio' } });
+    weeks[i].tasks.push({ key: `R-${i}-notes`, text: '整理本週錯題的觀念筆記', sub: '寫下答錯原因與正確觀念', act: null });
+  }
+  // 衝刺：由新到舊，每週一個年度的整份試卷
+  const years = [115, 114, 113, 112, 111, 110, 109, 108];
+  for (let i = L + R, k = 0; i < W; i++, k++) {
+    const y = years[k % years.length];
+    for (const s of SUBJ) if (subjOn.includes(s.key)) weeks[i].tasks.push({ key: `S-${y}-${s.key}`, text: `${y} 年 ${s.label} 整份試卷`, sub: '依考試時間計時作答，完成後檢討錯題', act: { kind: 'paper', y, subj: s.key } });
+  }
+  return { weeks, W, L, R, S, start, exam };
+}
+
+const PHASE = { 1: '第一輪・章節', 2: '複習', 3: '衝刺・整卷' };
+function renderPlan() {
+  const box = document.getElementById('plan-weeks');
+  if (!box) return;
+  document.getElementById('plan-start').value = plan.start;
+  document.getElementById('plan-exam').value = plan.exam;
+  document.getElementById('plan-hours').value = String(plan.hours);
+  const p = buildPlan();
+  const sum = document.getElementById('plan-summary');
+  if (p.error) { box.innerHTML = ''; sum.textContent = p.error; return; }
+  const all = p.weeks.flatMap(w => w.tasks), done = all.filter(t => plan.done[t.key]).length;
+  const sel = SCHOOLS.filter(s => state.schools.has(s.id)).map(s => s.name).join('、');
+  sum.innerHTML = `${esc(sel)}・二技申請入學，共 ${p.W} 週：第一輪 ${p.L} 週、複習 ${p.R} 週、衝刺 ${p.S} 週。已完成 <b class="mono">${done} / ${all.length}</b> 項。`;
+  document.getElementById('plan-bar').style.width = (all.length ? done / all.length * 100 : 0).toFixed(1) + '%';
+  document.getElementById('plan-where').textContent = plan.where === 'db' ? '進度已存到你的帳號，換裝置也看得到，其他人看不到' : '進度存在這台裝置的瀏覽器';
+  const today = new Date();
+  box.innerHTML = p.weeks.map(w => {
+    const to = new Date(w.from.getTime() + 6 * DAY), cur = today >= w.from && today < new Date(to.getTime() + DAY);
+    const d = w.tasks.filter(t => plan.done[t.key]).length;
+    return `<details class="pweek${cur ? ' cur' : ''}"${cur ? ' open' : ''}>
+      <summary><span class="mono">第 ${w.i + 1} 週</span><span class="muted">${md(w.from)}–${md(to)}</span><span class="ptag p${w.phase}">${PHASE[w.phase]}</span>${cur ? '<span class="ptag now">本週</span>' : ''}<span class="mono pcount">${d}/${w.tasks.length}</span></summary>
+      <ul class="ptasks">${w.tasks.map(t => `<li><label><input type="checkbox" data-key="${esc(t.key)}"${plan.done[t.key] ? ' checked' : ''}><span><b>${esc(t.text)}</b><br><span class="muted">${esc(t.sub)}</span></span></label>${t.act ? `<button type="button" class="linkbtn" data-act='${esc(JSON.stringify(t.act))}'>${t.act.kind === 'paper' ? '開始作答' : '去練習'}</button>` : ''}</li>`).join('')}</ul>
+    </details>`;
+  }).join('');
+  box.querySelectorAll('input[type=checkbox]').forEach(cb => cb.onchange = () => {
+    if (cb.checked) plan.done[cb.dataset.key] = 1; else delete plan.done[cb.dataset.key];
+    persistPlan(); renderPlan();
+  });
+  box.querySelectorAll('button[data-act]').forEach(b => b.onclick = () => planGo(JSON.parse(b.dataset.act)));
+}
+
+function planGo(a) {
+  if (a.kind === 'chapter') { state.subj = a.subj; state.chapter = a.code; state.query = ''; save(); renderExplorer(); P.scope = 'chapter'; P.count = 20; }
+  else if (a.kind === 'wrong') { P.scope = 'wrong'; P.count = 50; }
+  else if (a.kind === 'prio') { P.scope = 'prio'; P.count = 50; }
+  else if (a.kind === 'paper') { P.scope = 'paper'; P.paper = { y: a.y, s: a.subj }; }
+  P.run = null;
+  document.getElementById('p-run').hidden = true;
+  document.getElementById('p-setup').hidden = false;
+  renderPracticeSetup();
+  if (!practicePool().qs.length) { document.getElementById('practice').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  startPractice();
+}
+
+['plan-start', 'plan-exam'].forEach(id => document.getElementById(id).addEventListener('change', e => {
+  if (!parseYmd(e.target.value)) return;
+  plan[id === 'plan-start' ? 'start' : 'exam'] = e.target.value; persistPlan(); renderPlan();
+}));
+document.getElementById('plan-hours').addEventListener('change', e => { plan.hours = +e.target.value; persistPlan(); renderPlan(); });
+document.getElementById('plan-reset').addEventListener('click', () => {
+  if (!confirm('確定要清除所有已勾選的進度嗎？')) return;
+  plan.done = {}; persistPlan(); renderPlan();
+});
+
+function renderAll() { renderControls(); renderWeights(); renderPriority(); renderExplorer(); renderPracticeSetup(); renderPlan(); }
+renderAll();
+</script>

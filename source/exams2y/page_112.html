@@ -1,0 +1,183 @@
+
+<script type="text/javascript" src="jquery.js?ver=20200520"></script>
+<script>
+$(document).ready(function() {
+  // 1. 驗證索引值：確保為整數，避免非預期的字串注入
+  var rawVal = $("#__showTab").val();
+  var _showTab = parseInt(rawVal, 10);
+
+  // 初始化顯示
+  var $tabList = $('ul.tabs li');
+  var $contents = $('.tab_content');
+
+  if (isNaN(_showTab) || $tabList.eq(_showTab).length === 0) {
+    _showTab = 0; // 預設顯示第一個
+  }
+
+  $tabList.eq(_showTab).addClass('active');
+  $contents.hide().eq(_showTab).show();
+
+  // 2. 點擊事件優化
+  $tabList.not('.out').on('click', function(e) {
+    e.preventDefault(); // 阻止超連結預設行為
+    
+    var $this = $(this);
+    var $link = $this.find('a');
+    var targetId = $link.attr('href');
+
+    // 3. 防禦 XSS：檢查 targetId 是否為合法的 ID 格式 (以 # 開頭且不含特殊字元)
+    // 避免將 href 內容直接丟進 $() 執行
+    if (!/^#[a-zA-Z0-9_-]+$/.test(targetId)) {
+      console.warn("Invalid tab target:", targetId);
+      return false;
+    }
+
+    // 切換樣式
+    $this.addClass('active').siblings('.active').removeClass('active');
+
+    // 切換內容 (使用 find 縮小搜尋範圍，增加安全性)
+    var $targetContent = $(targetId);
+    if ($targetContent.length > 0) {
+      $targetContent.stop(true, true).fadeIn().siblings('.tab_content').hide();
+    }
+
+    return false;
+  }).find('a').on('focus', function() {
+    this.blur();
+  });
+});
+</script>
+<html>
+<head>
+<title>112學年度二技統一入學測驗各科試題與標準答案公布</title>
+<meta http-equiv=Content-Type content="text/html; charset=Big5">
+<link href="style.css?ver=20221223" rel="stylesheet" type="text/css">
+</head>
+<body lang=ZH-TW link=blue vlink=purple class="Normal" bgcolor="#FFFFFF">
+<CENTER>
+    <img src="images/Tcte_Logo.jpg"><br>
+    <p><font size=5 color=blue face="標楷體">112學年度二技統一入學測驗各科試題與標準答案公布</font></p>
+
+    <table border=0 cellspacing=0 cellpadding=5 width=1000>
+    <tr>
+      <td align=right colspan=2><small>本網頁更新時間：2023-05-18 09:00</small>
+    <tr>
+      <td valign="top"><img src="images/orange.gif"><td>本中心所公布之試題及標準答案均僅適用於考試當年度，內容僅供參考，若因課綱異動、教材內容更新致使試題及標準答案不符現況者，請依最新課綱及教材進行教學，並不得提出試題疑義及更正答案之需求。 
+    <tr>
+      <td valign="top"><img src="images/orange.gif"><td><font color=red>本基金會針對外界所提統一入學測驗試題疑義，已邀集命題委員及學者專家進行答覆，並彙整列入會議討論項目，於112年5月12日召開答案確認會議確認各科標準答案，且於同日17時正式公布標準答案，並據此計算成績。</font>
+    <tr>
+      <td valign="top"><img src="images/orange.gif"><td><font color="#003366">本試題使用Word及PDF檔格式，如未能開啟PDF時，請先下載並安裝最新版的瀏覽軟體<a href="http://get.adobe.com/tw/reader/">Adobe Acrobat Reader</a>。</font>
+    <tr>
+      <td valign="top"><img src="images/orange.gif"><td>請以PDF檔案為準，Word檔案因軟體版本不同，會導致格式版面產生差異。
+    <tr>
+      <td valign="top"><img src="images/orange.gif"><td>成績組距表包含原始成績之「組距」、「標準差」、「平均成績」、「頂標」、「前標」、「均標」、「後標」及「底標」。各標準之計算，均不含缺考生之該科成績，計算方式如下：
+<pre>
+頂標：位於第88百分位數之考生成績。
+前標：位於第75百分位數之考生成績。
+均標：位於第50百分位數之考生成績。
+後標：位於第25百分位數之考生成績。
+底標：位於第12百分位數之考生成績。
+</pre>
+
+<p>
+<!--<li>查看112學年度統一入學測驗相關統計資料，<a href='https://www.tcte.edu.tw/download/opendata/index_stat.php'>點此連結</a>-->
+<li>查看112學年度統一入學測驗公告統計資料，<a href='https://www2.tcte.edu.tw/index.php?mod=TVETest/opendata2y/yt/112'>點此連結</a>
+
+    </table>
+
+
+<input type=hidden name=__showTab id=__showTab value=0>
+<div class="abgne_tab">
+    <ul class="tabs">
+        <li><div><a href="#tab1">試題、答案、成績組距</a></div></li>
+        <li><div><a href="#tab2">試題或答案確認說明</a></div></li>
+    </ul>
+    <div class="tab_container">
+
+<div id="tab1" class="tab_content">
+    <table border=1 cellspacing=0 cellpadding=5 width=1000>
+    <tr>
+      <th class=td1 width=180>類別<th class=td1 width=270>考科<th class=td1 width=200>試題<th class=td1 width=150>標準答案<th class=td1 width=200>成績組距
+    <tr>
+      <td class=td2 rowspan=2>共同科目
+      <td class=td2>國文科
+      <td class=td2>
+&nbsp;<input type="image" src="images/icon_pdf.jpg" alt="PDF File" width=25 onclick="location.href='downloader.php?obj=MTEyLTJ5LTAwLWMucGRm'">
+&nbsp;<input type="image" src="images/icon_word.jpg" alt="Word File" width=25 onclick="location.href='downloader.php?obj=MTEyLTJ5LTAwLWMuZG9jeA=='">
+      <td class=td2>
+&nbsp;<input type="image" src="images/icon_pdf.jpg" alt="PDF File" width=25 onclick="location.href='downloader.php?obj=MTEyLTJ5LTAwLWMtc3RhbmRhcmQucGRm'">
+
+      <td class=td2 rowspan=2><span style='font-size:20px'>共同科目組距</span>
+&nbsp;<input type="image" src="images/icon_pdf.jpg" alt="PDF File" width=25 onclick="location.href='downloader.php?obj=MTEyLTJ5LUdyYWRlLTAwLnBkZg=='">
+
+    <tr>
+      <td class=td2>英文科
+      <td class=td2>
+&nbsp;<input type="image" src="images/icon_pdf.jpg" alt="PDF File" width=25 onclick="location.href='downloader.php?obj=MTEyLTJ5LTAwLWUucGRm'">
+&nbsp;<input type="image" src="images/icon_word.jpg" alt="Word File" width=25 onclick="location.href='downloader.php?obj=MTEyLTJ5LTAwLWUuZG9jeA=='">
+      <td class=td2>
+&nbsp;<input type="image" src="images/icon_pdf.jpg" alt="PDF File" width=25 onclick="location.href='downloader.php?obj=MTEyLTJ5LTAwLWUtc3RhbmRhcmQucGRm'">
+    
+    <tr>
+      <td class=td1 rowspan=2>01護理類
+      <td class=td1>專業科目(一)
+      <td class=td1>
+&nbsp;<input type="image" src="images/icon_pdf.jpg" alt="PDF File" width=25 onclick="location.href='downloader.php?obj=MTEyLTJ5LTAxLTEucGRm'">
+&nbsp;<input type="image" src="images/icon_word.jpg" alt="Word File" width=25 onclick="location.href='downloader.php?obj=MTEyLTJ5LTAxLTEuZG9jeA=='">
+      <td class=td1>
+&nbsp;<input type="image" src="images/icon_pdf.jpg" alt="PDF File" width=25 onclick="location.href='downloader.php?obj=MTEyLTJ5LTAxLTEtc3RhbmRhcmQucGRm'">
+      <td class=td1 rowspan=2><span style='font-size:20px'>本類別成績組距</span>
+&nbsp;<input type="image" src="images/icon_pdf.jpg" alt="PDF File" width=25 onclick="location.href='downloader.php?obj=MTEyLTJ5LUdyYWRlLTAxLnBkZg=='">
+
+    <tr>
+      <td class=td1>專業科目(二)
+      <td class=td1>
+&nbsp;<input type="image" src="images/icon_pdf.jpg" alt="PDF File" width=25 onclick="location.href='downloader.php?obj=MTEyLTJ5LTAxLTIucGRm'">
+&nbsp;<input type="image" src="images/icon_word.jpg" alt="Word File" width=25 onclick="location.href='downloader.php?obj=MTEyLTJ5LTAxLTIuZG9jeA=='">
+      <td class=td1>
+&nbsp;<input type="image" src="images/icon_pdf.jpg" alt="PDF File" width=25 onclick="location.href='downloader.php?obj=MTEyLTJ5LTAxLTItc3RhbmRhcmQucGRm'">
+
+    <tr>
+      <td class=td2 rowspan=2>02共同類
+      <td class=td2>專業科目(一)
+      <td class=td2>無
+      <td class=td2>無
+      <td class=td2 rowspan=2><span style='font-size:20px'>本類別成績組距</span>
+&nbsp;<input type="image" src="images/icon_pdf.jpg" alt="PDF File" width=25 onclick="location.href='downloader.php?obj=MTEyLTJ5LUdyYWRlLTAyLnBkZg=='">
+    
+    <tr>
+      <td class=td2>專業科目(二)
+      <td class=td2>無
+      <td class=td2>無
+
+    </table>
+</div>
+
+<div id="tab2" class="tab_content">
+
+<table border=1 cellspacing=0 cellpadding=5 width=99% class='report'>
+<tr><th width=11%>考科代碼<th width=20%>類別<th width=11%>科目<th width=45%>考科內容<th width=*>試題或答案<br>確認說明下載
+<tr><td>2-00-C<td>二技共同科	<td>國文	<td>二技國文
+<td>  <input type="image" src="images/icon_pdf.jpg" alt="PDF File" width=25 onclick="location.href='downloader.php?obj=MTEyLTJ5LTAwLWMtY29uZmlybS5wZGY='">
+  
+<tr><td>2-00-E<td>二技共同科	<td>英文	<td>二技英文
+<td>  <input type="image" src="images/icon_pdf.jpg" alt="PDF File" width=25 onclick="location.href='downloader.php?obj=MTEyLTJ5LTAwLWUtY29uZmlybS5wZGY='">
+  
+<tr><td>2-01-1<td>二技護理類	<td>專一	<td>（一）解剖生理學
+<td>未提出疑義
+<tr><td>2-01-2<td>二技護理類	<td>專二	<td>（二）基本護理學
+<td>  <input type="image" src="images/icon_pdf.jpg" alt="PDF File" width=25 onclick="location.href='downloader.php?obj=MTEyLTJ5LTAxLTItY29uZmlybS5wZGY='">
+  
+</table>
+
+
+</div>
+
+    </div>
+</div>
+   
+</CENTER>
+
+</body>
+</html>
+
