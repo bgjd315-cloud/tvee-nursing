@@ -37,3 +37,7 @@ python check_explain.py     # 檢查解析題數與答案是否和公告答案�
 3. 標記章節（`exams/tags.py`、`exams2y/tags/`），撰寫 `explain/{年}-{科}.json` 解析。
 4. 依新簡章更新目標校採計方式（統測寫在 `exams/page_template.html` 的 `SCHOOLS`，二技寫在 `exams2y/make_template.py`，並同步記到 `schools.json`），並把年份清單加上新年度。
 5. 重建網頁並推送。
+
+## 國文英文考題分析網站
+
+`common/build_common.py` 由上面兩個護理類網頁的範本與資料，只取國文、英文，產生「統測／二技 國文英文考題分析」網站（輸出到 `../site_common/`，發布在 <https://bgjd315-cloud.github.io/tvee-common/>）。護理類資料或範本更新後重跑一次，再把 `site_common/` 的內容複製到 tvee-common 專案推送。
